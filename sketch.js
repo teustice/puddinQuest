@@ -5,10 +5,13 @@ let score = 0;
 let projectiles = [];
 
 function setup() {
+  let foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
   createCanvas(800,800);
   face = loadImage("https://t5.rbxcdn.com/e597ed8a8a0fde9574c6cbd6b54cb177");
 
-  food  = createSprite(random(1,800), random(1,800), width/20, height/20);
+  food = createSprite(random(100,700), random(100,-700), 20, 20);
+  randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
+  food.addImage(randomFood);
 
   //Sometimes image sequences are not enough and you may want to
   //use p5's drawing function while retaining the built-in features of the
@@ -67,6 +70,7 @@ function draw() {
     updateScore();
     food.remove();
     food = createSprite(random(1,800), random(1,800), width/20, height/20);
+    // food.addImage(foodPaths[Math.floor(Math.random() * foodPaths.length)]);
   }
 
   drawSprites();
