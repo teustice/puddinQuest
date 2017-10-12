@@ -2,6 +2,7 @@ var stretchy;
 var face;
 let food;
 let score = 0;
+let projectiles = [];
 
 function setup() {
   createCanvas(800,800);
@@ -12,7 +13,7 @@ function setup() {
   //Sometimes image sequences are not enough and you may want to
   //use p5's drawing function while retaining the built-in features of the
   //sprite class
-  stretchy = createSprite(400, 200, 10, 10);
+  stretchy = createSprite(400, 200, 1, 1);
 
   //To do so you can override (overwrite) the draw() function of the sprite
   //and make it display anything you want in its current position.
@@ -28,19 +29,34 @@ function setup() {
     //proportionally to its speed
     push();
     rotate(radians(this.getDirection()));
-    ellipse(0,0, 100+this.getSpeed(), 100-this.getSpeed());
+    ellipse(0,0, 50+this.getSpeed()/2, 50-this.getSpeed()/2);
     pop();
 
     //this.deltaX and this.deltaY are the position increment
     //since the last frame, move the face image toward the direction
-    image(face, this.deltaX*2,this.deltaY*2, face.width/8, face.height/8);
+    image(face, this.deltaX*2,this.deltaY*2, face.width/18, face.height/18);
     }
 
   stretchy.maxSpeed = 10;
 }
 
 function draw() {
+  noCursor();
   background(0);
+  //set number of projectiles at one time
+  purge();
+  if(projectiles.length < 20){
+    newProjectile = createSprite(1, random(1, 800), width/20, height/20);
+    projectiles.push(newProjectile);
+    newProjectile.setSpeed(random(5,10), 360);
+  }
+  for(let i=0; i < projectiles.length; i++){
+    if(projectiles.length > 0){
+      if(stretchy.overlap(projectiles[i])){
+        // alert("GAME OVER");
+      }
+    }
+  }
 
   //mouse trailer, the speed is inversely proportional to the mouse distance
   stretchy.velocity.x = (mouseX-stretchy.position.x)/10;
@@ -60,4 +76,14 @@ function updateScore(){
   score++;
   let scoreBoard = document.getElementById("scoreBoard");
   scoreBoard.innerHTML = `Score: ${score}`;
+}
+
+function purge(){
+  for(let i=0; i<projectiles.length; i++){
+    if(
+      projectiles[i].position.y < -800 || projectiles[i].position.y > 800 || projectiles[i].position.x > 800 ||
+      projectiles[i].position.x < -800){
+      projectiles.splice(projectiles.indexOf(projectiles[i]), 1);
+    }
+  }
 }
