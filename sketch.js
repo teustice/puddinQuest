@@ -1,13 +1,13 @@
-//Dynamically drawn sprites
-//sprite with a custom drawing function follows the mouse
-//and changes shape according to its speed
-
 var stretchy;
 var face;
+let food;
+let score = 0;
 
 function setup() {
   createCanvas(800,800);
   face = loadImage("https://t5.rbxcdn.com/e597ed8a8a0fde9574c6cbd6b54cb177");
+
+  food  = createSprite(random(1,800), random(1,800), width/20, height/20);
 
   //Sometimes image sequences are not enough and you may want to
   //use p5's drawing function while retaining the built-in features of the
@@ -46,5 +46,18 @@ function draw() {
   stretchy.velocity.x = (mouseX-stretchy.position.x)/10;
   stretchy.velocity.y = (mouseY-stretchy.position.y)/10;
 
+  //food collison
+  if(food && stretchy.overlap(food)){
+    updateScore();
+    food.remove();
+    food = createSprite(random(1,800), random(1,800), width/20, height/20);
+  }
+
   drawSprites();
+}
+
+function updateScore(){
+  score++;
+  let scoreBoard = document.getElementById("scoreBoard");
+  scoreBoard.innerHTML = `Score: ${score}`;
 }
