@@ -3,9 +3,9 @@ var face;
 let food;
 let score = 0;
 let projectiles = [];
-
+let foodPaths;
 function setup() {
-  let foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
+  foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
   createCanvas(800,800);
   face = loadImage("https://t5.rbxcdn.com/e597ed8a8a0fde9574c6cbd6b54cb177");
 
@@ -70,7 +70,8 @@ function draw() {
     updateScore();
     food.remove();
     food = createSprite(random(1,800), random(1,800), width/20, height/20);
-    // food.addImage(foodPaths[Math.floor(Math.random() * foodPaths.length)]);
+    randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
+    food.addImage(randomFood);
   }
 
   drawSprites();
