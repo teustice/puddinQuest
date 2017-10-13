@@ -8,3 +8,4 @@ $npm install http-server -g
 $cd puddinQuest
 $http-server
 ```
+![](https://github.com/teustice/puddinQuest/blob/master/assets/puddin.gif)
