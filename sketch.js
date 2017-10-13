@@ -13,6 +13,7 @@ let infoText;
 function setup() {
   infoText = document.getElementById("infoText");
   foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
+  bgPaths =  [loadImage('assets/bg1.png'), loadImage('assets/bg4.jpg'), loadImage('assets/bg3.jpg'), loadImage('assets/bg2.jpg')];
   canvas = createCanvas(800,800);
   canvas.parent('sketch-holder');
   face = loadImage("https://t5.rbxcdn.com/e597ed8a8a0fde9574c6cbd6b54cb177");
@@ -22,7 +23,7 @@ function setup() {
 
 function draw() {
   noCursor();
-  background(0);
+  background(bgImage());
   purge();
   if(playing == true){
     //set number of projectiles at one time
@@ -159,4 +160,16 @@ function renderStretchy(){
 
   stretchy.maxSpeed = 10;
 
+}
+
+function bgImage(){
+  if(score < 5){
+    return bgPaths[0];
+  } else if(score < 10){
+    return bgPaths[1];
+  } else if(score < 15){
+    return bgPaths[2];
+  } else if(score < 20){
+    return bgPaths[3];
+  }
 }
