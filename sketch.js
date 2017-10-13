@@ -1,15 +1,16 @@
-var stretchy;
-var face;
+let stretchy;
+let face;
 let food;
 let score = 0;
 let projectiles = [];
 let foodPaths;
+let gameOver = false;
 function setup() {
   foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
-  createCanvas(800,800);
+  canvas = createCanvas(800,800);
+  canvas.parent('sketch-holder');
   face = loadImage("https://t5.rbxcdn.com/e597ed8a8a0fde9574c6cbd6b54cb177");
-
-  food = createSprite(random(100,700), random(100,-700), 20, 20);
+  food = createSprite(random(50,750), random(50,750), 20, 20);
   randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
   food.addImage(randomFood);
 
@@ -48,7 +49,7 @@ function draw() {
   background(0);
   //set number of projectiles at one time
   purge();
-  if(projectiles.length < 20){
+  if(projectiles.length < 10){
     newProjectile = createSprite(1, random(1, 800), width/20, height/20);
     projectiles.push(newProjectile);
     newProjectile.setSpeed(random(5,10), 360);
@@ -56,7 +57,10 @@ function draw() {
   for(let i=0; i < projectiles.length; i++){
     if(projectiles.length > 0){
       if(stretchy.overlap(projectiles[i])){
-        // alert("GAME OVER");
+        if(gameOver == false){
+          gameOver = true;
+          alert("YOU DIED!");
+        }
       }
     }
   }
@@ -88,6 +92,7 @@ function purge(){
     if(
       projectiles[i].position.y < -800 || projectiles[i].position.y > 800 || projectiles[i].position.x > 800 ||
       projectiles[i].position.x < -800){
+      projectiles[i].remove();
       projectiles.splice(projectiles.indexOf(projectiles[i]), 1);
     }
   }
