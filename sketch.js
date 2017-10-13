@@ -11,6 +11,7 @@ let timer = true;
 let infoText;
 
 function setup() {
+  infoText = document.getElementById("infoText");
   foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
   canvas = createCanvas(800,800);
   canvas.parent('sketch-holder');
@@ -55,20 +56,17 @@ function draw() {
     randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
     food.addImage(randomFood);
   }
-
   countDown();
-
   drawSprites();
 }
 
 function updateScore(reset){
-  let scoreBoard = document.getElementById("scoreBoard");
   if(reset){
     score = 0;
   } else {
     score++;
   }
-  scoreBoard.innerHTML = `Score: ${score}`;
+  infoText.innerHTML = `Score: ${score}`;
 }
 
 function purge(){
@@ -84,6 +82,7 @@ function purge(){
 
 function start(){
   playing = true;
+  infoText.innerHTML = `Score: ${score}`
   renderStartTile();
   food = createSprite(random(50,750), random(50,750), 20, 20);
   randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
@@ -98,6 +97,7 @@ function reset(){
   renderStretchy();
   timer = true;
   gameOver = false;
+  infoText.innerHTML = "Stay on the tile to start!";
   for(let i=0; i<projectiles.length; i++){
     projectiles[i].remove();
   }
@@ -116,18 +116,18 @@ function renderStartTile(){
 }
 
 function countDown(){
-  countDownDisplay = document.getElementById("scoreBoard");
   let timerCount = 5;
-  if(timer && stretchy.overlap(startCircle)){
+  if(playing == false && timer && stretchy.overlap(startCircle)){
     timer = false;
     let interval = setInterval(function(){
-      countDownDisplay.innerHTML = `Starting in ${timerCount}`;
+      infoText.innerHTML = `Starting in ${timerCount}`;
       if(timerCount == 1){
+        clearInterval(interval);
         start();
       } else if(timerCount < 1 || !stretchy.overlap(startCircle)){
         clearInterval(interval);
         if(timerCount > 1){
-          countDownDisplay.innerHTML = `Stay on the tile to start!`;
+          infoText.innerHTML = `Stay on the tile to start!`;
           timer = true;
         }
       }
