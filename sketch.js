@@ -4,24 +4,140 @@ let food;
 let score = 0;
 let projectiles = [];
 let foodPaths;
+let playing = false;
 let gameOver = false;
+let startCircle;
+let timer = true;
+let infoText;
+
 function setup() {
   foodPaths = [loadImage('assets/banana.png'), loadImage('assets/burger.png'), loadImage('assets/cake.png'), loadImage('assets/pizza.png')];
   canvas = createCanvas(800,800);
   canvas.parent('sketch-holder');
   face = loadImage("https://t5.rbxcdn.com/e597ed8a8a0fde9574c6cbd6b54cb177");
+  renderStartTile();
+  renderStretchy();
+}
+
+function draw() {
+  noCursor();
+  background(0);
+  purge();
+  if(playing == true){
+    //set number of projectiles at one time
+    if(projectiles.length < 10){
+      newProjectile = createSprite(1, random(1, 800), width/20, height/20);
+      projectiles.push(newProjectile);
+      newProjectile.setSpeed(random(5,10), 360);
+    }
+    for(let i=0; i < projectiles.length; i++){
+      if(projectiles.length > 0){
+        if(stretchy.overlap(projectiles[i])){
+          if(gameOver == false){
+            gameOver = true;
+            reset();
+            alert(`GAME OVER, YOUR SCORE WAS: ${score}`);
+          }
+        }
+      }
+    }
+  }
+
+  //mouse trailer, the speed is inversely proportional to the mouse distance
+  stretchy.velocity.x = (mouseX-stretchy.position.x)/10;
+  stretchy.velocity.y = (mouseY-stretchy.position.y)/10;
+
+  //food collison
+  if(food && stretchy.overlap(food)){
+    updateScore();
+    food.remove();
+    food = createSprite(random(1,800), random(1,800), width/20, height/20);
+    randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
+    food.addImage(randomFood);
+  }
+
+  countDown();
+
+  drawSprites();
+}
+
+function updateScore(reset){
+  let scoreBoard = document.getElementById("scoreBoard");
+  if(reset){
+    score = 0;
+  } else {
+    score++;
+  }
+  scoreBoard.innerHTML = `Score: ${score}`;
+}
+
+function purge(){
+  for(let i=0; i<projectiles.length; i++){
+    if(
+      projectiles[i].position.y < -800 || projectiles[i].position.y > 800 || projectiles[i].position.x > 800 ||
+      projectiles[i].position.x < -800){
+      projectiles[i].remove();
+      projectiles.splice(projectiles.indexOf(projectiles[i]), 1);
+    }
+  }
+}
+
+function start(){
+  playing = true;
+  renderStartTile();
   food = createSprite(random(50,750), random(50,750), 20, 20);
   randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
   food.addImage(randomFood);
+  updateScore(true);
+}
 
-  //Sometimes image sequences are not enough and you may want to
-  //use p5's drawing function while retaining the built-in features of the
-  //sprite class
+function reset(){
+  playing = false;
+  renderStartTile();
+  stretchy.remove();
+  renderStretchy();
+  timer = true;
+  gameOver = false;
+  for(let i=0; i<projectiles.length; i++){
+    projectiles[i].remove();
+  }
+  projectiles = [];
+  food.remove();
+  food = null;
+}
+
+function renderStartTile(){
+  if(playing == false){
+    startCircle = createSprite(400, 400, 100, 100);
+  } else {
+    startCircle.remove();
+    startCircle = null;
+  }
+}
+
+function countDown(){
+  countDownDisplay = document.getElementById("scoreBoard");
+  let timerCount = 5;
+  if(timer && stretchy.overlap(startCircle)){
+    timer = false;
+    let interval = setInterval(function(){
+      countDownDisplay.innerHTML = `Starting in ${timerCount}`;
+      if(timerCount == 1){
+        start();
+      } else if(timerCount < 1 || !stretchy.overlap(startCircle)){
+        clearInterval(interval);
+        if(timerCount > 1){
+          countDownDisplay.innerHTML = `Stay on the tile to start!`;
+          timer = true;
+        }
+      }
+      timerCount--;
+    }, 1000);
+  }
+}
+
+function renderStretchy(){
   stretchy = createSprite(400, 200, 1, 1);
-
-  //To do so you can override (overwrite) the draw() function of the sprite
-  //and make it display anything you want in its current position.
-  //In javascript function and methods can be assigned like variables
 
   stretchy.draw = function() {
 
@@ -42,58 +158,5 @@ function setup() {
     }
 
   stretchy.maxSpeed = 10;
-}
 
-function draw() {
-  noCursor();
-  background(0);
-  //set number of projectiles at one time
-  purge();
-  if(projectiles.length < 10){
-    newProjectile = createSprite(1, random(1, 800), width/20, height/20);
-    projectiles.push(newProjectile);
-    newProjectile.setSpeed(random(5,10), 360);
-  }
-  for(let i=0; i < projectiles.length; i++){
-    if(projectiles.length > 0){
-      if(stretchy.overlap(projectiles[i])){
-        if(gameOver == false){
-          gameOver = true;
-          alert("YOU DIED!");
-        }
-      }
-    }
-  }
-
-  //mouse trailer, the speed is inversely proportional to the mouse distance
-  stretchy.velocity.x = (mouseX-stretchy.position.x)/10;
-  stretchy.velocity.y = (mouseY-stretchy.position.y)/10;
-
-  //food collison
-  if(food && stretchy.overlap(food)){
-    updateScore();
-    food.remove();
-    food = createSprite(random(1,800), random(1,800), width/20, height/20);
-    randomFood = foodPaths[Math.floor(Math.random() * foodPaths.length)];
-    food.addImage(randomFood);
-  }
-
-  drawSprites();
-}
-
-function updateScore(){
-  score++;
-  let scoreBoard = document.getElementById("scoreBoard");
-  scoreBoard.innerHTML = `Score: ${score}`;
-}
-
-function purge(){
-  for(let i=0; i<projectiles.length; i++){
-    if(
-      projectiles[i].position.y < -800 || projectiles[i].position.y > 800 || projectiles[i].position.x > 800 ||
-      projectiles[i].position.x < -800){
-      projectiles[i].remove();
-      projectiles.splice(projectiles.indexOf(projectiles[i]), 1);
-    }
-  }
 }
